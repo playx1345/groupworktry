@@ -14,16 +14,313 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admins: {
+        Row: {
+          created_at: string
+          department: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          role: string | null
+          staff_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          role?: string | null
+          staff_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          role?: string | null
+          staff_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          is_general: boolean | null
+          target_level: Database["public"]["Enums"]["student_level"] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          is_general?: boolean | null
+          target_level?: Database["public"]["Enums"]["student_level"] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_general?: boolean | null
+          target_level?: Database["public"]["Enums"]["student_level"] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          course_code: string
+          course_title: string
+          created_at: string
+          credit_unit: number
+          department: string | null
+          id: string
+          level: Database["public"]["Enums"]["student_level"]
+          semester: Database["public"]["Enums"]["semester"]
+        }
+        Insert: {
+          course_code: string
+          course_title: string
+          created_at?: string
+          credit_unit: number
+          department?: string | null
+          id?: string
+          level: Database["public"]["Enums"]["student_level"]
+          semester: Database["public"]["Enums"]["semester"]
+        }
+        Update: {
+          course_code?: string
+          course_title?: string
+          created_at?: string
+          credit_unit?: number
+          department?: string | null
+          id?: string
+          level?: Database["public"]["Enums"]["student_level"]
+          semester?: Database["public"]["Enums"]["semester"]
+        }
+        Relationships: []
+      }
+      fee_payments: {
+        Row: {
+          amount_due: number
+          amount_paid: number | null
+          created_at: string
+          id: string
+          level: Database["public"]["Enums"]["student_level"]
+          payment_date: string | null
+          reference_number: string | null
+          semester: Database["public"]["Enums"]["semester"]
+          session: string
+          status: Database["public"]["Enums"]["fee_status"]
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount_due: number
+          amount_paid?: number | null
+          created_at?: string
+          id?: string
+          level: Database["public"]["Enums"]["student_level"]
+          payment_date?: string | null
+          reference_number?: string | null
+          semester: Database["public"]["Enums"]["semester"]
+          session: string
+          status?: Database["public"]["Enums"]["fee_status"]
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount_due?: number
+          amount_paid?: number | null
+          created_at?: string
+          id?: string
+          level?: Database["public"]["Enums"]["student_level"]
+          payment_date?: string | null
+          reference_number?: string | null
+          semester?: Database["public"]["Enums"]["semester"]
+          session?: string
+          status?: Database["public"]["Enums"]["fee_status"]
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fee_payments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      results: {
+        Row: {
+          ca_score: number | null
+          course_id: string
+          created_at: string
+          exam_score: number | null
+          grade: string | null
+          grade_point: number | null
+          id: string
+          session: string
+          student_id: string
+          total_score: number | null
+          updated_at: string
+        }
+        Insert: {
+          ca_score?: number | null
+          course_id: string
+          created_at?: string
+          exam_score?: number | null
+          grade?: string | null
+          grade_point?: number | null
+          id?: string
+          session: string
+          student_id: string
+          total_score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          ca_score?: number | null
+          course_id?: string
+          created_at?: string
+          exam_score?: number | null
+          grade?: string | null
+          grade_point?: number | null
+          id?: string
+          session?: string
+          student_id?: string
+          total_score?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "results_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "results_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      students: {
+        Row: {
+          address: string | null
+          created_at: string
+          date_of_birth: string | null
+          department: string | null
+          email: string
+          faculty: string | null
+          first_name: string
+          gender: string | null
+          id: string
+          last_name: string
+          level: Database["public"]["Enums"]["student_level"]
+          lga: string | null
+          matric_number: string
+          middle_name: string | null
+          password_changed: boolean | null
+          phone: string | null
+          state_of_origin: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          department?: string | null
+          email: string
+          faculty?: string | null
+          first_name: string
+          gender?: string | null
+          id?: string
+          last_name: string
+          level: Database["public"]["Enums"]["student_level"]
+          lga?: string | null
+          matric_number: string
+          middle_name?: string | null
+          password_changed?: boolean | null
+          phone?: string | null
+          state_of_origin?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          department?: string | null
+          email?: string
+          faculty?: string | null
+          first_name?: string
+          gender?: string | null
+          id?: string
+          last_name?: string
+          level?: Database["public"]["Enums"]["student_level"]
+          lga?: string | null
+          matric_number?: string
+          middle_name?: string | null
+          password_changed?: boolean | null
+          phone?: string | null
+          state_of_origin?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_grade: {
+        Args: { total_score: number }
+        Returns: {
+          grade: string
+          grade_point: number
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      fee_status: "paid" | "unpaid" | "partial"
+      semester: "First" | "Second"
+      student_level: "ND1" | "ND2"
+      user_role: "student" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +447,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      fee_status: ["paid", "unpaid", "partial"],
+      semester: ["First", "Second"],
+      student_level: ["ND1", "ND2"],
+      user_role: ["student", "admin"],
+    },
   },
 } as const
