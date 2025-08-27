@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 20% 98%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -17,8 +17,18 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 220 100% 40%;
+    --primary-foreground: 0 0% 100%;
+    
+    --polytechnic-green: 120 45% 35%;
+    --polytechnic-gold: 45 90% 55%;
+    --polytechnic-blue: 220 100% 40%;
+    
+    --gradient-hero: linear-gradient(135deg, hsl(var(--polytechnic-blue)), hsl(var(--polytechnic-green)));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 20% 98%));
+    
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.1);
+    --shadow-card: 0 4px 20px -4px hsl(220 100% 40% / 0.15);
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
