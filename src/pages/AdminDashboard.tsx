@@ -1,0 +1,498 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthWrapper";
+import { 
+  Shield, 
+  LogOut, 
+  Users, 
+  FileText, 
+  CreditCard, 
+  UserPlus,
+  Upload,
+  Settings,
+  Bell
+} from "lucide-react";
+
+interface Admin {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  staff_id: string;
+  department: string;
+}
+
+interface Student {
+  id: string;
+  matric_number: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  level: string;
+  created_at: string;
+}
+
+const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user, session, loading: authLoading } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [admin, setAdmin] = useState<Admin | null>(null);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [activeTab, setActiveTab] = useState("overview");
+  
+  // New student form
+  const [newStudentForm, setNewStudentForm] = useState({
+    email: "",
+    matricNumber: "",
+    firstName: "",
+    lastName: "",
+    level: "ND1",
+    phone: ""
+  });
+
+  useEffect(() => {
+    if (!authLoading) {
+      checkAdminAccess();
+    }
+  }, [authLoading, user]);
+
+  const checkAdminAccess = async () => {
+    if (!user || !session) {
+      navigate("/admin/login");
+      return;
+    }
+
+    try {
+      // Check if user is admin
+      const { data: adminData, error } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error || !adminData) {
+        toast({
+          title: "Access Denied",
+          description: "You are not authorized to access this area",
+          variant: "destructive",
+        });
+        await supabase.auth.signOut();
+        navigate("/admin/login");
+        return;
+      }
+
+      setAdmin(adminData);
+      await loadStudents();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to verify admin access",
+        variant: "destructive",
+      });
+      navigate("/admin/login");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadStudents = async () => {
+    const { data, error } = await supabase
+      .from('students')
+      .select('id, matric_number, first_name, last_name, email, level, created_at')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load students",
+        variant: "destructive",
+      });
+    } else {
+      setStudents(data || []);
+    }
+  };
+
+  const handleCreateStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      
+      // Create auth user with default password
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: newStudentForm.email,
+        password: "2233", // Default password as specified
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            matric_number: newStudentForm.matricNumber,
+            first_name: newStudentForm.firstName,
+            last_name: newStudentForm.lastName,
+            phone: newStudentForm.phone,
+            level: newStudentForm.level,
+          }
+        }
+      });
+
+      if (authError) {
+        toast({
+          title: "Error Creating Student",
+          description: authError.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Student Created",
+        description: `Student ${newStudentForm.firstName} ${newStudentForm.lastName} has been created successfully`,
+      });
+
+      // Reset form
+      setNewStudentForm({
+        email: "",
+        matricNumber: "",
+        firstName: "",
+        lastName: "",
+        level: "ND1",
+        phone: ""
+      });
+
+      // Reload students
+      await loadStudents();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create student account",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out",
+    });
+  };
+
+  if (authLoading || loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-slate-700 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <Shield className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-muted-foreground">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!admin) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6 text-center">
+            <Shield className="w-12 h-12 text-destructive mx-auto mb-4" />
+            <h2 className="text-xl font-semibold mb-2">Access Denied</h2>
+            <p className="text-muted-foreground mb-4">
+              You do not have admin privileges
+            </p>
+            <Button onClick={() => navigate("/admin/login")} variant="outline">
+              Return to Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-blue-600 rounded-lg flex items-center justify-center">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-foreground">Admin Dashboard</h1>
+                <p className="text-sm text-muted-foreground">Welcome, {admin.first_name}</p>
+              </div>
+            </div>
+            <Button onClick={handleLogout} variant="outline" size="sm">
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-5 mb-8">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="students">Students</TabsTrigger>
+            <TabsTrigger value="results">Results</TabsTrigger>
+            <TabsTrigger value="fees">Fee Management</TabsTrigger>
+            <TabsTrigger value="announcements">Announcements</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Students</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{students.length}</div>
+                  <p className="text-xs text-muted-foreground">Registered students</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">ND1 Students</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {students.filter(s => s.level === 'ND1').length}
+                  </div>
+                  <p className="text-xs text-muted-foreground">First year students</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">ND2 Students</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {students.filter(s => s.level === 'ND2').length}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Second year students</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Department</CardTitle>
+                  <Settings className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-lg font-bold">{admin.department}</div>
+                  <p className="text-xs text-muted-foreground">Your department</p>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="students">
+            <div className="space-y-6">
+              {/* Create Student Form */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserPlus className="w-5 h-5" />
+                    Create New Student Account
+                  </CardTitle>
+                  <CardDescription>
+                    Add a new student to the system with default password: 2233
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleCreateStudent} className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input
+                        id="firstName"
+                        value={newStudentForm.firstName}
+                        onChange={(e) => setNewStudentForm({ ...newStudentForm, firstName: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        value={newStudentForm.lastName}
+                        onChange={(e) => setNewStudentForm({ ...newStudentForm, lastName: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={newStudentForm.email}
+                        onChange={(e) => setNewStudentForm({ ...newStudentForm, email: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="matricNumber">Matric Number</Label>
+                      <Input
+                        id="matricNumber"
+                        value={newStudentForm.matricNumber}
+                        onChange={(e) => setNewStudentForm({ ...newStudentForm, matricNumber: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="level">Level</Label>
+                      <Select
+                        value={newStudentForm.level}
+                        onValueChange={(value) => setNewStudentForm({ ...newStudentForm, level: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ND1">ND1</SelectItem>
+                          <SelectItem value="ND2">ND2</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        value={newStudentForm.phone}
+                        onChange={(e) => setNewStudentForm({ ...newStudentForm, phone: e.target.value })}
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Button type="submit" disabled={loading}>
+                        {loading ? "Creating..." : "Create Student Account"}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+
+              {/* Students List */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Students List</CardTitle>
+                  <CardDescription>All registered students in the system</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {students.map((student) => (
+                      <div key={student.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h4 className="font-semibold">{student.first_name} {student.last_name}</h4>
+                          <p className="text-sm text-muted-foreground">{student.matric_number}</p>
+                          <p className="text-sm text-muted-foreground">{student.email}</p>
+                        </div>
+                        <div className="text-right">
+                          <Badge variant="secondary">{student.level}</Badge>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(student.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {students.length === 0 && (
+                      <p className="text-center text-muted-foreground py-8">No students found</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="results">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  Result Management
+                </CardTitle>
+                <CardDescription>Upload and manage student results</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Result Upload</h3>
+                  <p className="text-muted-foreground mb-4">
+                    This section will allow you to upload and manage student results
+                  </p>
+                  <Button disabled>Coming Soon</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="fees">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CreditCard className="w-5 h-5" />
+                  Fee Management
+                </CardTitle>
+                <CardDescription>Verify and manage student fee payments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <CreditCard className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Fee Verification</h3>
+                  <p className="text-muted-foreground mb-4">
+                    This section will allow you to verify and manage student fee payments
+                  </p>
+                  <Button disabled>Coming Soon</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="announcements">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="w-5 h-5" />
+                  Announcements
+                </CardTitle>
+                <CardDescription>Send announcements to students by level</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Student Announcements</h3>
+                  <p className="text-muted-foreground mb-4">
+                    This section will allow you to send announcements to students
+                  </p>
+                  <Button disabled>Coming Soon</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;

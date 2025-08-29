@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthWrapper";
 import { 
   GraduationCap, 
   LogOut, 
@@ -38,28 +39,28 @@ interface FeeStatus {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, session, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [student, setStudent] = useState<Student | null>(null);
   const [feeStatus, setFeeStatus] = useState<FeeStatus[]>([]);
 
   useEffect(() => {
-    checkAuthAndLoadData();
-  }, []);
+    if (!authLoading) {
+      checkAuthAndLoadData();
+    }
+  }, [authLoading, user]);
 
   const checkAuthAndLoadData = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/auth?mode=login");
-        return;
-      }
+    if (!user || !session) {
+      navigate("/auth?mode=login");
+      return;
+    }
 
-      // Fetch student profile
+    try {
       const { data: studentData, error: studentError } = await supabase
         .from('students')
         .select('*')
-        .eq('user_id', session.user.id)
+        .eq('user_id', user.id)
         .single();
 
       if (studentError) {
@@ -117,7 +118,7 @@ const Dashboard = () => {
     return getFeePaidStatus(level, semester);
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
         <div className="text-center">
