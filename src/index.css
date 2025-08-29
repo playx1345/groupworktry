@@ -20,9 +20,9 @@ All colors MUST be HSL.
     --primary: 220 100% 40%;
     --primary-foreground: 0 0% 100%;
     
-    --polytechnic-green: 120 45% 35%;
-    --polytechnic-gold: 45 90% 55%;
-    --polytechnic-blue: 220 100% 40%;
+    --polytechnic-green: 142 69% 58%;
+    --polytechnic-gold: 45 90% 60%;
+    --polytechnic-blue: 220 100% 50%;
     
     --gradient-hero: linear-gradient(135deg, hsl(var(--polytechnic-blue)), hsl(var(--polytechnic-green)));
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 20% 98%));

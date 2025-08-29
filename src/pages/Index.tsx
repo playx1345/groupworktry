@@ -35,11 +35,11 @@ const Index = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto text-center">
           <div className="mb-8">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+            <div className="w-24 h-24 bg-gradient-to-br from-polytechnic-blue to-polytechnic-green rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-elegant">
               <GraduationCap className="w-12 h-12 text-white" />
             </div>
-            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              Plateau State Polytechnic
+            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-polytechnic-blue to-polytechnic-green bg-clip-text text-transparent">
+              Plateau State Polytechnic Barkin Ladi
             </h1>
             <h2 className="text-3xl font-semibold mb-2 text-foreground">
               School of Information and Communication Technology
@@ -50,12 +50,52 @@ const Index = () => {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+            <Button asChild size="lg" className="bg-gradient-to-r from-polytechnic-blue to-polytechnic-green hover:shadow-lg transition-all duration-300">
               <Link to="/auth?mode=register">Register as Student</Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outline" size="lg" className="border-polytechnic-blue text-polytechnic-blue hover:bg-polytechnic-blue hover:text-white">
               <Link to="/auth?mode=login">View My Results</Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Vision and Mission Section */}
+      <section className="py-16 px-4 bg-gradient-to-r from-polytechnic-blue/5 to-polytechnic-green/5">
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            <Card className="text-center shadow-card border-0 bg-gradient-card">
+              <CardHeader>
+                <div className="w-16 h-16 bg-gradient-to-br from-polytechnic-blue to-polytechnic-green rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <GraduationCap className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-polytechnic-blue mb-4">Our Vision</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground leading-relaxed">
+                  To revolutionize academic transparency and efficiency through a secure, accessible, 
+                  and intelligent result management system—empowering students and administrators of 
+                  the Department of Computer Science with real-time academic insights and digital autonomy.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center shadow-card border-0 bg-gradient-card">
+              <CardHeader>
+                <div className="w-16 h-16 bg-gradient-to-br from-polytechnic-green to-polytechnic-gold rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-polytechnic-green mb-4">Our Mission</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="text-muted-foreground space-y-3 text-left">
+                  <li>• Develop a user-friendly web-based platform that simplifies result access, fee verification, and academic performance tracking for ND1 and ND2 students</li>
+                  <li>• Uphold data integrity, security, and accessibility using modern web technologies and cloud infrastructure</li>
+                  <li>• Foster digital transformation within the Department by automating administrative tasks</li>
+                  <li>• Support academic excellence through timely feedback and personalized performance analytics</li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -65,12 +105,12 @@ const Index = () => {
         <div className="container mx-auto">
           <h3 className="text-3xl font-bold text-center mb-12 text-foreground">System Features</h3>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center shadow-lg border-0 bg-gradient-to-br from-white to-blue-50">
+            <Card className="text-center shadow-card border-0 bg-gradient-card">
               <CardHeader>
-                <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-polytechnic-blue rounded-xl flex items-center justify-center mx-auto mb-4">
                   <FileText className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-blue-700">View Results</CardTitle>
+                <CardTitle className="text-polytechnic-blue">View Results</CardTitle>
                 <CardDescription>
                   Access your ND1 and ND2 semester results with detailed breakdown
                 </CardDescription>
@@ -85,12 +125,12 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="text-center shadow-lg border-0 bg-gradient-to-br from-white to-green-50">
+            <Card className="text-center shadow-card border-0 bg-gradient-card">
               <CardHeader>
-                <div className="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-polytechnic-green rounded-xl flex items-center justify-center mx-auto mb-4">
                   <Shield className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-green-700">Secure Access</CardTitle>
+                <CardTitle className="text-polytechnic-green">Secure Access</CardTitle>
                 <CardDescription>
                   Fee verification and secure authentication system
                 </CardDescription>
@@ -105,12 +145,12 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="text-center shadow-lg border-0 bg-gradient-to-br from-white to-purple-50">
+            <Card className="text-center shadow-card border-0 bg-gradient-card">
               <CardHeader>
-                <div className="w-16 h-16 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-polytechnic-gold rounded-xl flex items-center justify-center mx-auto mb-4">
                   <Users className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-purple-700">Administration</CardTitle>
+                <CardTitle className="text-polytechnic-gold">Administration</CardTitle>
                 <CardDescription>
                   Comprehensive admin panel for result management
                 </CardDescription>
@@ -129,7 +169,7 @@ const Index = () => {
       </section>
 
       {/* Contact Information */}
-      <section className="py-16 px-4 bg-gradient-to-r from-blue-600 to-green-600">
+      <section className="py-16 px-4 bg-gradient-to-r from-polytechnic-blue to-polytechnic-green">
         <div className="container mx-auto text-center text-white">
           <h3 className="text-3xl font-bold mb-6">Contact Information</h3>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
