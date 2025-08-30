@@ -25,7 +25,7 @@ export type Database = {
           role: string | null
           staff_id: string
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -37,7 +37,7 @@ export type Database = {
           role?: string | null
           staff_id: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -49,7 +49,7 @@ export type Database = {
           role?: string | null
           staff_id?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -314,6 +314,10 @@ export type Database = {
           grade: string
           grade_point: number
         }[]
+      }
+      verify_admin_login: {
+        Args: { admin_email: string; admin_password: string }
+        Returns: boolean
       }
     }
     Enums: {
