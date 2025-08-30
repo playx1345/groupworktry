@@ -23,6 +23,26 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
+      // Check if this is the default admin login
+      if (form.email === 'admin@plasu.edu.ng' && form.password === '123456') {
+        // Handle default admin login without Supabase auth
+        // Store admin info in localStorage for session management
+        localStorage.setItem('adminSession', JSON.stringify({
+          email: form.email,
+          isDefaultAdmin: true,
+          loginTime: Date.now()
+        }));
+
+        toast({
+          title: "Login Successful",
+          description: "Welcome to the admin dashboard",
+        });
+
+        navigate("/admin/dashboard");
+        return;
+      }
+
+      // For other admin accounts, use normal Supabase auth
       const { error } = await supabase.auth.signInWithPassword({
         email: form.email,
         password: form.password,

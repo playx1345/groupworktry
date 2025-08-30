@@ -67,6 +67,31 @@ const AdminDashboard = () => {
   }, [authLoading, user]);
 
   const checkAdminAccess = async () => {
+    // Check for default admin session first
+    const adminSession = localStorage.getItem('adminSession');
+    if (adminSession) {
+      try {
+        const sessionData = JSON.parse(adminSession);
+        if (sessionData.isDefaultAdmin && sessionData.email === 'admin@plasu.edu.ng') {
+          // Use default admin data
+          setAdmin({
+            id: 'default-admin',
+            first_name: 'System',
+            last_name: 'Administrator',
+            email: 'admin@plasu.edu.ng',
+            staff_id: 'ADMIN001',
+            department: 'Computer Science'
+          });
+          await loadStudents();
+          setLoading(false);
+          return;
+        }
+      } catch (error) {
+        localStorage.removeItem('adminSession');
+      }
+    }
+
+    // For regular Supabase authenticated admins
     if (!user || !session) {
       navigate("/admin/login");
       return;
@@ -183,7 +208,12 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = async () => {
+    // Clear admin session
+    localStorage.removeItem('adminSession');
+    
+    // Also sign out from Supabase if user is signed in
     await supabase.auth.signOut();
+    
     navigate("/");
     toast({
       title: "Logged Out",
