@@ -11,12 +11,12 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-elegant p-1">
-                <img src="/lovable-uploads/868ef83e-4412-4c0c-b6a9-9db317c8b2c1.png" alt="Plateau State Polytechnic Logo" className="w-full h-full object-contain" />
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-green-600 rounded-lg flex items-center justify-center">
+                <GraduationCap className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">PLATEAU STATE POLYTECHNIC BARKIN LADI</h1>
-                <p className="text-sm text-polytechnic-blue font-medium">Technology for Progress</p>
+                <h1 className="text-lg font-bold text-foreground">PLASU ICT</h1>
+                <p className="text-sm text-muted-foreground">Result Portal</p>
               </div>
             </div>
             <div className="flex gap-2">
