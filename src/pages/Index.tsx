@@ -35,7 +35,7 @@ const Index = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto text-center">
           <div className="mb-8">
-            <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-elegant p-2">
+            <div className="w-32 h-32 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-elegant p-2">
               <img src="/lovable-uploads/868ef83e-4412-4c0c-b6a9-9db317c8b2c1.png" alt="Plateau State Polytechnic Logo" className="w-full h-full object-contain" />
             </div>
             <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-polytechnic-blue to-polytechnic-green bg-clip-text text-transparent">
