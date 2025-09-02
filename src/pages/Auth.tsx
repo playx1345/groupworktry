@@ -20,9 +20,13 @@ const Auth = () => {
 
   // Login form state
   const [loginForm, setLoginForm] = useState({
-    email: "",
-    password: ""
+    matricNumber: "",
+    pin: ""
   });
+
+  // Password reset state
+  const [resetEmail, setResetEmail] = useState("");
+  const [showReset, setShowReset] = useState(false);
 
   // Register form state
   const [registerForm, setRegisterForm] = useState({
@@ -52,15 +56,37 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // First, find the student with the matric number
+      const { data: studentData, error: studentError } = await supabase
+        .from('students')
+        .select('email, id, password_changed')
+        .eq('matric_number', loginForm.matricNumber)
+        .single();
+
+      if (studentError || !studentData) {
+        toast({
+          title: "Login Failed",
+          description: "Invalid matric number. Please check and try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // For default PIN (2233), use the matric number as password
+      // For changed passwords, users would use their custom password
+      const password = studentData.password_changed ? loginForm.pin : "2233";
+
       const { error } = await supabase.auth.signInWithPassword({
-        email: loginForm.email,
-        password: loginForm.password,
+        email: studentData.email,
+        password: password,
       });
 
       if (error) {
         toast({
           title: "Login Failed",
-          description: error.message,
+          description: error.message.includes("Invalid login") 
+            ? "Invalid PIN. Please check your credentials."
+            : error.message,
           variant: "destructive",
         });
         return;
@@ -72,6 +98,42 @@ const Auth = () => {
       });
 
       navigate("/dashboard");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth?mode=login`,
+      });
+
+      if (error) {
+        toast({
+          title: "Reset Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Reset Email Sent",
+        description: "Check your email for password reset instructions",
+      });
+
+      setShowReset(false);
+      setResetEmail("");
     } catch (error) {
       toast({
         title: "Error",
@@ -182,7 +244,9 @@ const Auth = () => {
             </CardTitle>
             <CardDescription>
               {mode === "login" 
-                ? "Enter your credentials to access your results" 
+                ? showReset 
+                  ? "Enter your email to reset your password" 
+                  : "Use your matric number and PIN to access your results"
                 : "Register as a new student"
               }
             </CardDescription>
@@ -195,33 +259,70 @@ const Auth = () => {
               </TabsList>
               
               <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="your.email@example.com"
-                      value={loginForm.email}
-                      onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="Enter your password"
-                      value={loginForm.password}
-                      onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Signing In..." : "Sign In"}
-                  </Button>
-                </form>
+                {!showReset ? (
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="matricNumber">Matric Number</Label>
+                      <Input
+                        id="matricNumber"
+                        type="text"
+                        placeholder="e.g., ND/CS/2024/001"
+                        value={loginForm.matricNumber}
+                        onChange={(e) => setLoginForm({ ...loginForm, matricNumber: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="pin">PIN</Label>
+                      <Input
+                        id="pin"
+                        type="password"
+                        placeholder="Enter your PIN (default: 2233)"
+                        value={loginForm.pin}
+                        onChange={(e) => setLoginForm({ ...loginForm, pin: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? "Signing In..." : "Sign In"}
+                    </Button>
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        onClick={() => setShowReset(true)}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        Forgot your PIN? Reset password
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <form onSubmit={handlePasswordReset} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="resetEmail">Email Address</Label>
+                      <Input
+                        id="resetEmail"
+                        type="email"
+                        placeholder="Enter your registered email"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? "Sending Reset Email..." : "Send Reset Email"}
+                    </Button>
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        onClick={() => setShowReset(false)}
+                        className="text-sm text-muted-foreground hover:underline"
+                      >
+                        Back to login
+                      </button>
+                    </div>
+                  </form>
+                )}
               </TabsContent>
               
               <TabsContent value="register">
