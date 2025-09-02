@@ -9,6 +9,9 @@ import Auth from "./pages/Auth";
 import AdminLogin from "./pages/AdminLogin";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import StudentResults from "./pages/StudentResults";
+import AdminResultUpload from "./pages/AdminResultUpload";
+import AdminBulkUpload from "./pages/AdminBulkUpload";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +28,10 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/results" element={<StudentResults />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/upload" element={<AdminResultUpload />} />
+            <Route path="/admin/bulk-upload" element={<AdminBulkUpload />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

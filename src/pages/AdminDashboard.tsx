@@ -19,7 +19,8 @@ import {
   UserPlus,
   Upload,
   Settings,
-  Bell
+  Bell,
+  FileSpreadsheet
 } from "lucide-react";
 
 interface Admin {
@@ -455,25 +456,50 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="results">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Result Management
-                </CardTitle>
-                <CardDescription>Upload and manage student results</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Result Upload</h3>
-                  <p className="text-muted-foreground mb-4">
-                    This section will allow you to upload and manage student results
-                  </p>
-                  <Button disabled>Coming Soon</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Result Management
+                  </CardTitle>
+                  <CardDescription>Upload and manage student results</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="text-center">
+                          <Upload className="w-8 h-8 text-primary mx-auto mb-3" />
+                          <h3 className="font-semibold mb-2">Individual Upload</h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Upload results for individual students one by one
+                          </p>
+                          <Button onClick={() => navigate("/admin/upload")} className="w-full">
+                            Upload Results
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="text-center">
+                          <FileSpreadsheet className="w-8 h-8 text-secondary mx-auto mb-3" />
+                          <h3 className="font-semibold mb-2">Bulk Upload</h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Import multiple results from CSV/Excel files
+                          </p>
+                          <Button onClick={() => navigate("/admin/bulk-upload")} className="w-full" variant="secondary">
+                            Bulk Upload
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="fees">

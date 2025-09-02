@@ -294,6 +294,7 @@ const Dashboard = () => {
                           size="sm" 
                           className="w-full"
                           disabled={!canViewResults('ND1', 'First')}
+                          onClick={() => navigate(`/results?level=ND1&semester=First`)}
                         >
                           {canViewResults('ND1', 'First') ? 'View Results' : 'Fee Required'}
                         </Button>
@@ -319,6 +320,7 @@ const Dashboard = () => {
                           size="sm" 
                           className="w-full"
                           disabled={!canViewResults('ND1', 'Second')}
+                          onClick={() => navigate(`/results?level=ND1&semester=Second`)}
                         >
                           {canViewResults('ND1', 'Second') ? 'View Results' : 'Fee Required'}
                         </Button>
@@ -350,6 +352,7 @@ const Dashboard = () => {
                           size="sm" 
                           className="w-full"
                           disabled={!canViewResults('ND2', 'First')}
+                          onClick={() => navigate(`/results?level=ND2&semester=First`)}
                         >
                           {canViewResults('ND2', 'First') ? 'View Results' : 'Fee Required'}
                         </Button>
@@ -375,6 +378,7 @@ const Dashboard = () => {
                           size="sm" 
                           className="w-full"
                           disabled={!canViewResults('ND2', 'Second')}
+                          onClick={() => navigate(`/results?level=ND2&semester=Second`)}
                         >
                           {canViewResults('ND2', 'Second') ? 'View Results' : 'Fee Required'}
                         </Button>
