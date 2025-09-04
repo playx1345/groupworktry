@@ -279,9 +279,10 @@ const AdminDashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="students">Students</TabsTrigger>
+            <TabsTrigger value="create-student">Quick Create</TabsTrigger>
             <TabsTrigger value="results">Results</TabsTrigger>
             <TabsTrigger value="fees">Fee Management</TabsTrigger>
             <TabsTrigger value="announcements">Announcements</TabsTrigger>
@@ -341,6 +342,48 @@ const AdminDashboard = () => {
 
           <TabsContent value="students">
             <div className="space-y-6">
+              {/* Quick Actions */}
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <Users className="w-8 h-8 text-primary mx-auto mb-3" />
+                      <h3 className="font-semibold mb-2">Manage Students</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        View, create, and manage student accounts
+                      </p>
+                      <Button 
+                        onClick={() => navigate("/admin/students")}
+                        className="w-full"
+                      >
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Student Management
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <FileSpreadsheet className="w-8 h-8 text-primary mx-auto mb-3" />
+                      <h3 className="font-semibold mb-2">Quick Create</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Create a new student account quickly
+                      </p>
+                      <Button 
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => setActiveTab("create-student")}
+                      >
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Quick Create
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
               {/* Create Student Form */}
               <Card>
                 <CardHeader>
@@ -453,6 +496,89 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="create-student">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <UserPlus className="w-5 h-5" />
+                  Quick Create Student Account
+                </CardTitle>
+                <CardDescription>
+                  Create a new student account with default PIN (2233)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleCreateStudent} className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      value={newStudentForm.firstName}
+                      onChange={(e) => setNewStudentForm({ ...newStudentForm, firstName: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      value={newStudentForm.lastName}
+                      onChange={(e) => setNewStudentForm({ ...newStudentForm, lastName: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={newStudentForm.email}
+                      onChange={(e) => setNewStudentForm({ ...newStudentForm, email: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="matricNumber">Matric Number</Label>
+                    <Input
+                      id="matricNumber"
+                      value={newStudentForm.matricNumber}
+                      onChange={(e) => setNewStudentForm({ ...newStudentForm, matricNumber: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="level">Level</Label>
+                    <Select
+                      value={newStudentForm.level}
+                      onValueChange={(value) => setNewStudentForm({ ...newStudentForm, level: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ND1">ND1</SelectItem>
+                        <SelectItem value="ND2">ND2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input
+                      id="phone"
+                      value={newStudentForm.phone}
+                      onChange={(e) => setNewStudentForm({ ...newStudentForm, phone: e.target.value })}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Button type="submit" disabled={loading} className="w-full">
+                      {loading ? "Creating Student..." : "Create Student Account"}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="results">

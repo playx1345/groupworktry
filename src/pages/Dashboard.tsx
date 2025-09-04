@@ -210,9 +210,18 @@ const Dashboard = () => {
                     <p className="text-sm font-medium text-muted-foreground">Phone</p>
                     <p>{student.phone}</p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                 )}
+                 <Button 
+                   size="sm" 
+                   variant="outline" 
+                   className="w-full mt-4"
+                   onClick={() => navigate("/profile")}
+                 >
+                   <User className="w-4 h-4 mr-2" />
+                   Edit Profile
+                 </Button>
+               </CardContent>
+             </Card>
 
             {/* Password Warning */}
             {!student.password_changed && (
@@ -225,7 +234,12 @@ const Dashboard = () => {
                       <p className="text-sm text-yellow-700 mt-1">
                         For security, please change your default password in your profile settings.
                       </p>
-                      <Button size="sm" className="mt-3" variant="outline">
+                      <Button 
+                        size="sm" 
+                        className="mt-3" 
+                        variant="outline"
+                        onClick={() => navigate("/profile")}
+                      >
                         Update Password
                       </Button>
                     </div>

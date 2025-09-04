@@ -72,9 +72,9 @@ const Auth = () => {
         return;
       }
 
-      // For default PIN (2233), use the matric number as password
-      // For changed passwords, users would use their custom password
-      const password = studentData.password_changed ? loginForm.pin : "2233";
+      // For default PIN, accept "2233". For changed passwords, use the PIN they entered
+      const password = studentData.password_changed ? loginForm.pin : 
+                      (loginForm.pin === "2233" ? "2233" : loginForm.pin);
 
       const { error } = await supabase.auth.signInWithPassword({
         email: studentData.email,
