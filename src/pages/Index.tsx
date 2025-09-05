@@ -49,11 +49,8 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <div className="flex justify-center mb-12">
             <Button asChild size="lg" className="bg-gradient-to-r from-polytechnic-blue to-polytechnic-green hover:shadow-lg transition-all duration-300">
-              <Link to="/auth?mode=register">Register as Student</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="border-polytechnic-blue text-polytechnic-blue hover:bg-polytechnic-blue hover:text-white">
               <Link to="/auth?mode=login">View My Results</Link>
             </Button>
           </div>
