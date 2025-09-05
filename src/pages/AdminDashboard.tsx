@@ -348,16 +348,16 @@ const AdminDashboard = () => {
                   <CardContent className="pt-6">
                     <div className="text-center">
                       <Users className="w-8 h-8 text-primary mx-auto mb-3" />
-                      <h3 className="font-semibold mb-2">Manage Students</h3>
+                      <h3 className="font-semibold mb-2">Student Management</h3>
                       <p className="text-sm text-muted-foreground mb-4">
-                        View, create, and manage student accounts
+                        View, create, edit, and manage all student accounts in one place
                       </p>
                       <Button 
                         onClick={() => navigate("/admin/students")}
                         className="w-full"
                       >
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        Student Management
+                        <Users className="w-4 h-4 mr-2" />
+                        Manage Students
                       </Button>
                     </div>
                   </CardContent>
@@ -367,104 +367,22 @@ const AdminDashboard = () => {
                   <CardContent className="pt-6">
                     <div className="text-center">
                       <FileSpreadsheet className="w-8 h-8 text-primary mx-auto mb-3" />
-                      <h3 className="font-semibold mb-2">Quick Create</h3>
+                      <h3 className="font-semibold mb-2">Bulk Operations</h3>
                       <p className="text-sm text-muted-foreground mb-4">
-                        Create a new student account quickly
+                        Upload results and manage bulk operations
                       </p>
                       <Button 
                         variant="outline"
                         className="w-full"
-                        onClick={() => setActiveTab("create-student")}
+                        onClick={() => navigate("/admin/bulk-upload")}
                       >
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        Quick Create
+                        <Upload className="w-4 h-4 mr-2" />
+                        Bulk Upload
                       </Button>
                     </div>
                   </CardContent>
                 </Card>
               </div>
-
-              {/* Create Student Form */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <UserPlus className="w-5 h-5" />
-                    Create New Student Account
-                  </CardTitle>
-                  <CardDescription>
-                    Add a new student to the system with default password: 2233
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleCreateStudent} className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input
-                        id="firstName"
-                        value={newStudentForm.firstName}
-                        onChange={(e) => setNewStudentForm({ ...newStudentForm, firstName: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input
-                        id="lastName"
-                        value={newStudentForm.lastName}
-                        onChange={(e) => setNewStudentForm({ ...newStudentForm, lastName: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={newStudentForm.email}
-                        onChange={(e) => setNewStudentForm({ ...newStudentForm, email: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="matricNumber">Matric Number</Label>
-                      <Input
-                        id="matricNumber"
-                        value={newStudentForm.matricNumber}
-                        onChange={(e) => setNewStudentForm({ ...newStudentForm, matricNumber: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="level">Level</Label>
-                      <Select
-                        value={newStudentForm.level}
-                        onValueChange={(value) => setNewStudentForm({ ...newStudentForm, level: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="ND1">ND1</SelectItem>
-                          <SelectItem value="ND2">ND2</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        value={newStudentForm.phone}
-                        onChange={(e) => setNewStudentForm({ ...newStudentForm, phone: e.target.value })}
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <Button type="submit" disabled={loading}>
-                        {loading ? "Creating..." : "Create Student Account"}
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
 
               {/* Students List */}
               <Card>
