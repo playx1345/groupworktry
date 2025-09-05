@@ -21,6 +21,9 @@ const Index = () => {
             </div>
             <div className="flex gap-2">
               <Button asChild variant="outline">
+                <Link to="/demo">View Demo</Link>
+              </Button>
+              <Button asChild variant="outline">
                 <Link to="/auth?mode=login">Student Login</Link>
               </Button>
               <Button asChild>
