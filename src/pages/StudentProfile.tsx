@@ -6,16 +6,21 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { PasswordInput } from "@/components/ui/password-input";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthWrapper";
+import { validatePassword, logAuditEvent } from "@/lib/validation";
 import { 
   ArrowLeft, 
   User, 
   Lock, 
   Save,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Eye,
+  EyeOff
 } from "lucide-react";
 
 interface Student {
@@ -50,6 +55,11 @@ const StudentProfile = () => {
     currentPassword: "",
     newPassword: "",
     confirmPassword: ""
+  });
+  const [passwordValidation, setPasswordValidation] = useState({
+    current: { isValid: true, error: "" },
+    new: { isValid: false, error: "" },
+    confirm: { isValid: false, error: "" }
   });
 
   useEffect(() => {
@@ -142,8 +152,9 @@ const StudentProfile = () => {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!student) return;
+    if (!student || !user) return;
 
+    // Validate passwords match
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       toast({
         title: "Password Mismatch",
@@ -153,10 +164,22 @@ const StudentProfile = () => {
       return;
     }
 
-    if (passwordForm.newPassword.length < 6) {
+    // Validate new password strength
+    const passwordValidation = validatePassword(passwordForm.newPassword);
+    if (!passwordValidation.isValid) {
       toast({
-        title: "Password Too Short",
-        description: "Password must be at least 6 characters",
+        title: "Password Invalid",
+        description: passwordValidation.error,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate current password if not first time change
+    if (student.password_changed && !passwordForm.currentPassword) {
+      toast({
+        title: "Current Password Required",
+        description: "Please enter your current password",
         variant: "destructive",
       });
       return;
@@ -165,6 +188,24 @@ const StudentProfile = () => {
     setSaving(true);
 
     try {
+      // If password has been changed before, verify current password
+      if (student.password_changed) {
+        const { error: verifyError } = await supabase.auth.signInWithPassword({
+          email: student.email,
+          password: passwordForm.currentPassword,
+        });
+
+        if (verifyError) {
+          toast({
+            title: "Current Password Incorrect",
+            description: "Please enter your correct current password",
+            variant: "destructive",
+          });
+          setSaving(false);
+          return;
+        }
+      }
+
       // Update password in Supabase Auth
       const { error: authError } = await supabase.auth.updateUser({
         password: passwordForm.newPassword
@@ -183,7 +224,7 @@ const StudentProfile = () => {
       const { error: updateError } = await supabase
         .from('students')
         .update({ password_changed: true })
-        .eq('user_id', user?.id);
+        .eq('user_id', user.id);
 
       if (updateError) {
         toast({
@@ -194,15 +235,35 @@ const StudentProfile = () => {
         return;
       }
 
+      // Log audit event
+      await logAuditEvent({
+        action: 'PASSWORD_CHANGE',
+        tableName: 'auth.users',
+        recordId: user.id,
+        newValues: {
+          password_changed: true,
+          action_type: student.password_changed ? 'password_update' : 'initial_password_set'
+        }
+      });
+
+      // Update local state
       setStudent({ ...student, password_changed: true });
-      setShowPasswordDialog(false);
-      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
       
+      // Reset form
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      });
+      
+      setShowPasswordDialog(false);
+
       toast({
         title: "Password Updated",
-        description: "Your password has been successfully changed",
+        description: "Your password has been successfully updated",
       });
     } catch (error) {
+      console.error('Password update error:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -215,7 +276,7 @@ const StudentProfile = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
           <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
             <User className="w-8 h-8 text-white" />
@@ -228,7 +289,7 @@ const StudentProfile = () => {
 
   if (!student) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center transition-colors duration-300">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6 text-center">
             <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
@@ -246,9 +307,9 @@ const StudentProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50 transition-colors duration-300">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -264,6 +325,7 @@ const StudentProfile = () => {
             </div>
             <div className="flex items-center space-x-2">
               <h1 className="text-lg font-bold text-foreground">Student Profile</h1>
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -517,48 +579,91 @@ const StudentProfile = () => {
         </DialogHeader>
         <form onSubmit={handlePasswordChange} className="space-y-4">
           {student.password_changed && (
-            <div className="space-y-2">
-              <Label htmlFor="currentPassword">Current Password</Label>
-              <Input
-                id="currentPassword"
-                type="password"
-                value={passwordForm.currentPassword}
-                onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                required
-              />
-            </div>
+            <PasswordInput
+              id="currentPassword"
+              label="Current Password"
+              value={passwordForm.currentPassword}
+              onChange={(value) => setPasswordForm({ ...passwordForm, currentPassword: value })}
+              onValidation={(isValid, error) => {
+                setPasswordValidation(prev => ({
+                  ...prev,
+                  current: { isValid, error: error || "" }
+                }));
+              }}
+              placeholder="Enter your current password"
+              required
+              showStrengthMeter={false}
+              autoComplete="current-password"
+            />
           )}
-          <div className="space-y-2">
-            <Label htmlFor="newPassword">New Password</Label>
-            <Input
-              id="newPassword"
-              type="password"
-              value={passwordForm.newPassword}
-              onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-              placeholder="Enter new password (min 6 characters)"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm New Password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              value={passwordForm.confirmPassword}
-              onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-              placeholder="Confirm new password"
-              required
-            />
-          </div>
+          
+          <PasswordInput
+            id="newPassword"
+            label="New Password"
+            value={passwordForm.newPassword}
+            onChange={(value) => setPasswordForm({ ...passwordForm, newPassword: value })}
+            onValidation={(isValid, error) => {
+              setPasswordValidation(prev => ({
+                ...prev,
+                new: { isValid, error: error || "" }
+              }));
+            }}
+            placeholder="Create a strong password"
+            required
+            showStrengthMeter={true}
+            autoComplete="new-password"
+          />
+          
+          <PasswordInput
+            id="confirmPassword"
+            label="Confirm New Password"
+            value={passwordForm.confirmPassword}
+            onChange={(value) => setPasswordForm({ ...passwordForm, confirmPassword: value })}
+            onValidation={(isValid, error) => {
+              const passwordsMatch = passwordForm.newPassword === value;
+              const validationError = !passwordsMatch && value ? "Passwords do not match" : "";
+              setPasswordValidation(prev => ({
+                ...prev,
+                confirm: { isValid: passwordsMatch, error: validationError }
+              }));
+            }}
+            placeholder="Confirm your new password"
+            required
+            showStrengthMeter={false}
+            autoComplete="new-password"
+          />
+          
           <div className="flex gap-2 pt-4">
-            <Button type="submit" disabled={saving} className="flex-1">
-              {saving ? "Updating..." : "Update Password"}
+            <Button 
+              type="submit" 
+              disabled={saving || !passwordValidation.new.isValid || !passwordValidation.confirm.isValid} 
+              className="flex-1 transition-all duration-200"
+            >
+              {saving ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                  Updating...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Update Password
+                </>
+              )}
             </Button>
             <Button 
               type="button" 
               variant="outline" 
-              onClick={() => setShowPasswordDialog(false)}
-              className="flex-1"
+              onClick={() => {
+                setShowPasswordDialog(false);
+                setPasswordForm({
+                  currentPassword: "",
+                  newPassword: "",
+                  confirmPassword: ""
+                });
+              }}
+              className="flex-1 transition-all duration-200"
+              disabled={saving}
             >
               Cancel
             </Button>
