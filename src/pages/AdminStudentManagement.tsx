@@ -8,20 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ValidatedInput } from "@/components/ui/validated-input";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  validateUserCreationData, 
-  checkEmailUniqueness, 
-  checkMatricNumberUniqueness,
-  logAuditEvent,
-  validateName,
-  validateEmail,
-  validateMatricNumber,
-  validatePhone
-} from "@/lib/validation";
+import { cn } from "@/lib/utils";
 import { 
   ArrowLeft, 
   UserPlus, 

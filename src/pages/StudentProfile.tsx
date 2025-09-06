@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthWrapper";
 import { validatePassword, logAuditEvent } from "@/lib/validation";
+import { cn } from "@/lib/utils";
 import { 
   ArrowLeft, 
   User, 
