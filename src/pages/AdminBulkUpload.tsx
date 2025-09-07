@@ -111,8 +111,63 @@ const AdminBulkUpload = () => {
     setLoading(true);
 
     try {
-      const processed: ProcessedResult[] = [];
+      if (!data || data.length === 0) {
+        toast({
+          title: "No Data",
+          description: "No valid data found in the uploaded file",
+          variant: "destructive",
+        });
+        return;
+      }
 
+      const processed: ProcessedResult[] = [];
+      
+      // Validate input data format
+      const invalidRows: number[] = [];
+      data.forEach((row, index) => {
+        if (!row.matric_number || !row.course_code || !row.ca_score || !row.exam_score) {
+          invalidRows.push(index + 1);
+        }
+      });
+
+      if (invalidRows.length > 0) {
+        toast({
+          title: "Invalid Data",
+          description: `Missing required fields in rows: ${invalidRows.join(', ')}`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Get all unique student matric numbers and course codes for batch validation
+      const matricNumbers = [...new Set(data.map(row => row.matric_number.trim()))];
+      const courseCodes = [...new Set(data.map(row => row.course_code.trim()))];
+
+      // Batch fetch students
+      const { data: studentsData, error: studentsError } = await supabase
+        .from('students')
+        .select('id, matric_number')
+        .in('matric_number', matricNumbers);
+
+      if (studentsError) {
+        throw new Error(`Failed to fetch students: ${studentsError.message}`);
+      }
+
+      // Batch fetch courses
+      const { data: coursesData, error: coursesError } = await supabase
+        .from('courses')
+        .select('id, course_code')
+        .in('course_code', courseCodes);
+
+      if (coursesError) {
+        throw new Error(`Failed to fetch courses: ${coursesError.message}`);
+      }
+
+      // Create lookup maps for better performance
+      const studentMap = new Map(studentsData?.map(s => [s.matric_number, s.id]) || []);
+      const courseMap = new Map(coursesData?.map(c => [c.course_code, c.id]) || []);
+
+      // Process each row
       for (const row of data) {
         const result: ProcessedResult = {
           matric_number: row.matric_number.trim(),
@@ -120,7 +175,7 @@ const AdminBulkUpload = () => {
           ca_score: parseInt(row.ca_score) || 0,
           exam_score: parseInt(row.exam_score) || 0,
           total_score: (parseInt(row.ca_score) || 0) + (parseInt(row.exam_score) || 0),
-          session: row.session.trim() || '2024/2025',
+          session: row.session?.trim() || '2024/2025',
           status: 'valid'
         };
 
@@ -131,32 +186,25 @@ const AdminBulkUpload = () => {
         } else if (result.exam_score < 0 || result.exam_score > 70) {
           result.status = 'error';
           result.error_message = 'Exam score must be between 0 and 70';
+        } else if (result.total_score > 100) {
+          result.status = 'error';
+          result.error_message = 'Total score cannot exceed 100';
         } else {
-          // Find student
-          const { data: studentData, error: studentError } = await supabase
-            .from('students')
-            .select('id')
-            .eq('matric_number', result.matric_number)
-            .single();
-
-          if (studentError || !studentData) {
+          // Check if student exists
+          const studentId = studentMap.get(result.matric_number);
+          if (!studentId) {
             result.status = 'error';
-            result.error_message = 'Student not found';
+            result.error_message = `Student with matric number ${result.matric_number} not found`;
           } else {
-            result.student_id = studentData.id;
+            result.student_id = studentId;
 
-            // Find course
-            const { data: courseData, error: courseError } = await supabase
-              .from('courses')
-              .select('id')
-              .eq('course_code', result.course_code)
-              .single();
-
-            if (courseError || !courseData) {
+            // Check if course exists
+            const courseId = courseMap.get(result.course_code);
+            if (!courseId) {
               result.status = 'error';
-              result.error_message = 'Course not found';
+              result.error_message = `Course with code ${result.course_code} not found`;
             } else {
-              result.course_id = courseData.id;
+              result.course_id = courseId;
             }
           }
         }
@@ -168,10 +216,21 @@ const AdminBulkUpload = () => {
       setValidResults(processed.filter(r => r.status === 'valid'));
       setErrors(processed.filter(r => r.status === 'error'));
 
+      // Show summary
+      const validCount = processed.filter(r => r.status === 'valid').length;
+      const errorCount = processed.filter(r => r.status === 'error').length;
+      
+      toast({
+        title: "Processing Complete",
+        description: `${validCount} valid records, ${errorCount} errors found`,
+        variant: errorCount > 0 ? "destructive" : "default",
+      });
+
     } catch (error) {
+      console.error('Processing error:', error);
       toast({
         title: "Processing Error",
-        description: "Failed to process the uploaded file",
+        description: error instanceof Error ? error.message : "Failed to process the uploaded file",
         variant: "destructive",
       });
     } finally {

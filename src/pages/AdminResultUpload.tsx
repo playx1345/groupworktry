@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,17 +63,17 @@ const AdminResultUpload = () => {
 
   useEffect(() => {
     loadCourses();
-  }, [selectedLevel, selectedSemester]);
+  }, [loadCourses]);
 
   useEffect(() => {
     loadStudents();
-  }, [selectedLevel, searchMatric]);
+  }, [loadStudents]);
 
   const loadInitialData = async () => {
     // Initial load will be triggered by other useEffect hooks
   };
 
-  const loadStudents = async () => {
+  const loadStudents = useCallback(async () => {
     let query = supabase
       .from('students')
       .select('id, matric_number, first_name, last_name, middle_name, level')
@@ -96,9 +96,9 @@ const AdminResultUpload = () => {
     }
 
     setStudents(data || []);
-  };
+  }, [selectedLevel, searchMatric, toast]);
 
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async () => {
     const { data, error } = await supabase
       .from('courses')
       .select('*')
@@ -116,7 +116,7 @@ const AdminResultUpload = () => {
     }
 
     setCourses(data || []);
-  };
+  }, [selectedLevel, selectedSemester, toast]);
 
   const addStudentToResults = (student: Student) => {
     if (!selectedCourse) {

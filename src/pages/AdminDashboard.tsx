@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -65,9 +65,26 @@ const AdminDashboard = () => {
     if (!authLoading) {
       checkAdminAccess();
     }
-  }, [authLoading, user]);
+  }, [authLoading, checkAdminAccess]);
 
-  const checkAdminAccess = async () => {
+  const loadStudents = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('students')
+      .select('id, matric_number, first_name, last_name, email, level, created_at')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load students",
+        variant: "destructive",
+      });
+    } else {
+      setStudents(data || []);
+    }
+  }, [toast]);
+
+  const checkAdminAccess = useCallback(async () => {
     // Check for default admin session first
     const adminSession = localStorage.getItem('adminSession');
     if (adminSession) {
@@ -129,24 +146,7 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const loadStudents = async () => {
-    const { data, error } = await supabase
-      .from('students')
-      .select('id, matric_number, first_name, last_name, email, level, created_at')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load students",
-        variant: "destructive",
-      });
-    } else {
-      setStudents(data || []);
-    }
-  };
+  }, [user, session, navigate, toast, loadStudents]);
 
   const handleCreateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
