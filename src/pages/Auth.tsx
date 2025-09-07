@@ -55,9 +55,9 @@ const Auth = () => {
         return;
       }
 
-      // For default PIN, accept "2233". For changed passwords, use the PIN they entered
+      // For default PIN, accept "223344". For changed passwords, use the PIN they entered
       const password = studentData.password_changed ? loginForm.pin : 
-                      (loginForm.pin === "2233" ? "2233" : loginForm.pin);
+                      (loginForm.pin === "223344" ? "223344" : loginForm.pin);
 
       const { error } = await supabase.auth.signInWithPassword({
         email: studentData.email,
@@ -179,7 +179,7 @@ const Auth = () => {
                   <Input
                     id="pin"
                     type="password"
-                    placeholder="Enter your PIN (default: 2233)"
+                    placeholder="Enter your PIN (default: 223344)"
                     value={loginForm.pin}
                     onChange={(e) => setLoginForm({ ...loginForm, pin: e.target.value })}
                     required

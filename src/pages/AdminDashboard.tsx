@@ -224,9 +224,9 @@ const AdminDashboard = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-slate-700 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+          <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Shield className="w-8 h-8 text-white" />
           </div>
           <p className="text-muted-foreground">Loading admin dashboard...</p>
@@ -237,7 +237,7 @@ const AdminDashboard = () => {
 
   if (!admin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6 text-center">
             <Shield className="w-12 h-12 text-destructive mx-auto mb-4" />
@@ -255,13 +255,13 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
+      <header className="bg-white/90 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-slate-700 to-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
                 <Shield className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -269,7 +269,7 @@ const AdminDashboard = () => {
                 <p className="text-sm text-muted-foreground">Welcome, {admin.first_name}</p>
               </div>
             </div>
-            <Button onClick={handleLogout} variant="outline" size="sm">
+            <Button onClick={handleLogout} variant="outline" size="sm" className="hover:bg-red-50 hover:border-red-200">
               <LogOut className="w-4 h-4 mr-2" />
               Logout
             </Button>

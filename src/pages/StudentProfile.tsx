@@ -280,7 +280,7 @@ const StudentProfile = () => {
                   <div>
                     <h4 className="font-semibold text-yellow-800">Security Alert</h4>
                     <p className="text-sm text-yellow-700 mt-1">
-                      You are still using the default PIN (2233). Please change your password for security.
+                      You are still using the default PIN (223344). Please change your password for security.
                     </p>
                     <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
                       <DialogTrigger asChild>
@@ -511,7 +511,7 @@ const StudentProfile = () => {
           <DialogDescription>
             {student.password_changed 
               ? "Enter your current password and choose a new one"
-              : "Set a new password to replace your default PIN (2233)"
+              : "Set a new password to replace your default PIN (223344)"
             }
           </DialogDescription>
         </DialogHeader>
