@@ -106,10 +106,10 @@ const AdminStudentManagement = () => {
     setCreating(true);
 
     try {
-      // Create auth user with default password "2233"
+      // Create auth user with default password "223344"
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
-        password: "2233", // Default PIN
+        password: "223344", // Default PIN
         options: {
           data: {
             matric_number: formData.matricNumber,
@@ -141,7 +141,7 @@ const AdminStudentManagement = () => {
       // The student profile will be automatically created by the trigger
       toast({
         title: "Student Created Successfully",
-        description: `Student account created with default PIN: 2233`,
+        description: `Student account created with default PIN: 223344`,
       });
 
       // Reset form and close dialog
@@ -180,7 +180,7 @@ const AdminStudentManagement = () => {
     try {
       // Reset to default PIN
       const { error } = await supabase.auth.admin.updateUserById(studentId, {
-        password: "2233"
+        password: "223344"
       });
 
       if (error) {
@@ -200,7 +200,7 @@ const AdminStudentManagement = () => {
 
       toast({
         title: "Password Reset",
-        description: "Student password has been reset to default PIN: 2233",
+        description: "Student password has been reset to default PIN: 223344",
       });
 
       loadStudents();
@@ -330,7 +330,7 @@ const AdminStudentManagement = () => {
                             <Badge variant="default">Custom Password</Badge>
                           ) : (
                             <Badge variant="outline" className="text-yellow-600 border-yellow-600">
-                              Default PIN (2233)
+                              Default PIN (223344)
                             </Badge>
                           )}
                         </TableCell>
@@ -381,7 +381,7 @@ const AdminStudentManagement = () => {
         <DialogHeader>
           <DialogTitle>Add New Student</DialogTitle>
           <DialogDescription>
-            Create a new student account with default PIN (2233)
+            Create a new student account with default PIN (223344)
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleCreateStudent} className="space-y-6">

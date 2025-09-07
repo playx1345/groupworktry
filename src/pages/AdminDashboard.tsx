@@ -158,7 +158,7 @@ const AdminDashboard = () => {
       // Create auth user with default password
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: newStudentForm.email,
-        password: "2233", // Default password as specified
+        password: "223344", // Default password as specified
         options: {
           emailRedirectTo: redirectUrl,
           data: {
@@ -424,7 +424,7 @@ const AdminDashboard = () => {
                   Quick Create Student Account
                 </CardTitle>
                 <CardDescription>
-                  Create a new student account with default PIN (2233)
+                  Create a new student account with default PIN (223344)
                 </CardDescription>
               </CardHeader>
               <CardContent>
