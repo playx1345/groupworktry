@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,13 +52,7 @@ const StudentProfile = () => {
     confirmPassword: ""
   });
 
-  useEffect(() => {
-    if (!authLoading) {
-      loadStudentProfile();
-    }
-  }, [authLoading, user]);
-
-  const loadStudentProfile = async () => {
+  const loadStudentProfile = useCallback(async () => {
     if (!user || !session) {
       navigate("/auth?mode=login");
       return;
@@ -91,7 +85,13 @@ const StudentProfile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, session, navigate, toast]);
+
+  useEffect(() => {
+    if (!authLoading) {
+      loadStudentProfile();
+    }
+  }, [authLoading, loadStudentProfile]);
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();

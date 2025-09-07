@@ -7,7 +7,14 @@ function gradeToPoints(grade) {
   if (!grade || typeof grade !== 'string') return 0;
   const normalizedGrade = grade.trim().toUpperCase();
   const gradeMap = { 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1, 'F': 0 };
-  return gradeMap[normalizedGrade] || 0;
+  
+  // Additional validation to ensure grade is valid
+  if (!gradeMap.hasOwnProperty(normalizedGrade)) {
+    console.warn(`Invalid grade provided: ${grade}`);
+    return 0;
+  }
+  
+  return gradeMap[normalizedGrade];
 }
 
 function validateRowData(row) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,11 +69,7 @@ const AdminStudentManagement = () => {
     lga: ""
   });
 
-  useEffect(() => {
-    loadStudents();
-  }, []);
-
-  const loadStudents = async () => {
+  const loadStudents = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('students')
@@ -99,7 +95,11 @@ const AdminStudentManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    loadStudents();
+  }, [loadStudents]);
 
   const handleCreateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
