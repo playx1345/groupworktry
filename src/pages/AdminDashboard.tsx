@@ -62,6 +62,7 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
+    console.log('AdminDashboard mounted, authLoading:', authLoading, 'user:', user);
     if (!authLoading) {
       checkAdminAccess();
     }
@@ -73,16 +74,31 @@ const AdminDashboard = () => {
     if (adminSession) {
       try {
         const sessionData = JSON.parse(adminSession);
-        if (sessionData.isDefaultAdmin && sessionData.email === 'admin@plasu.edu.ng') {
-          // Use default admin data
-          setAdmin({
-            id: 'default-admin',
-            first_name: 'System',
-            last_name: 'Administrator',
-            email: 'admin@plasu.edu.ng',
-            staff_id: 'ADMIN001',
-            department: 'Computer Science'
-          });
+        // Check for both default admin accounts
+        if (sessionData.isDefaultAdmin && (
+          sessionData.email === 'admin@plasu.edu.ng' || 
+          sessionData.email === 'silasplayx64@gmail.com'
+        )) {
+          // Use appropriate admin data based on email
+          if (sessionData.email === 'silasplayx64@gmail.com') {
+            setAdmin({
+              id: 'custom-admin',
+              first_name: 'Silas',
+              last_name: 'Administrator',
+              email: 'silasplayx64@gmail.com',
+              staff_id: 'ADMIN002',
+              department: 'Computer Science'
+            });
+          } else {
+            setAdmin({
+              id: 'default-admin',
+              first_name: 'System',
+              last_name: 'Administrator',
+              email: 'admin@plasu.edu.ng',
+              staff_id: 'ADMIN001',
+              department: 'Computer Science'
+            });
+          }
           await loadStudents();
           setLoading(false);
           return;
