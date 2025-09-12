@@ -24,12 +24,33 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      // Check if this is the default admin login
+      // Check if this is the default admin login (original)
       if (form.email === 'admin@plasu.edu.ng' && form.password === '123456') {
         // Handle default admin login without Supabase auth
         // Store admin info in localStorage for session management
         localStorage.setItem('adminSession', JSON.stringify({
           email: form.email,
+          username: 'admin',
+          isDefaultAdmin: true,
+          loginTime: Date.now()
+        }));
+
+        toast({
+          title: "Login Successful",
+          description: "Welcome to the admin dashboard",
+        });
+
+        navigate("/admin/dashboard");
+        return;
+      }
+
+      // Check if this is the new admin login
+      if (form.username === 'admin' && form.email === 'silasplayx64@gmail.com' && form.password === '123456') {
+        // Handle new admin login without Supabase auth
+        // Store admin info in localStorage for session management
+        localStorage.setItem('adminSession', JSON.stringify({
+          email: form.email,
+          username: form.username,
           isDefaultAdmin: true,
           loginTime: Date.now()
         }));
