@@ -279,6 +279,175 @@ const AdminStudentManagement = () => {
                   Add New Student
                 </Button>
               </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Add New Student</DialogTitle>
+                  <DialogDescription>
+                    Create a new student account with default PIN (223344)
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleCreateStudent} className="space-y-6">
+                  {/* Personal Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Personal Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name *</Label>
+                        <Input
+                          id="firstName"
+                          value={formData.firstName}
+                          onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name *</Label>
+                        <Input
+                          id="lastName"
+                          value={formData.lastName}
+                          onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="middleName">Middle Name</Label>
+                        <Input
+                          id="middleName"
+                          value={formData.middleName}
+                          onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                        <Input
+                          id="dateOfBirth"
+                          type="date"
+                          value={formData.dateOfBirth}
+                          onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="gender">Gender</Label>
+                        <Select
+                          value={formData.gender}
+                          onValueChange={(value) => setFormData({ ...formData, gender: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Male">Male</SelectItem>
+                            <SelectItem value="Female">Female</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Academic Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Academic Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="matricNumber">Matric Number *</Label>
+                        <Input
+                          id="matricNumber"
+                          placeholder="e.g., ND/CS/2024/001"
+                          value={formData.matricNumber}
+                          onChange={(e) => setFormData({ ...formData, matricNumber: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="level">Level *</Label>
+                        <Select
+                          value={formData.level}
+                          onValueChange={(value) => setFormData({ ...formData, level: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select level" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ND1">ND1</SelectItem>
+                            <SelectItem value="ND2">ND2</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Contact Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email *</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Address Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Address Information</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="address">Address</Label>
+                        <Input
+                          id="address"
+                          value={formData.address}
+                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="stateOfOrigin">State of Origin</Label>
+                        <Input
+                          id="stateOfOrigin"
+                          value={formData.stateOfOrigin}
+                          onChange={(e) => setFormData({ ...formData, stateOfOrigin: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lga">Local Government Area</Label>
+                        <Input
+                          id="lga"
+                          value={formData.lga}
+                          onChange={(e) => setFormData({ ...formData, lga: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-4 pt-4">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setShowCreateDialog(false)}
+                      disabled={creating}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={creating}>
+                      {creating ? "Creating..." : "Create Student"}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
             </Dialog>
           </div>
 
@@ -376,177 +545,6 @@ const AdminStudentManagement = () => {
         </div>
       </div>
 
-      {/* Create Student Dialog */}
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Add New Student</DialogTitle>
-          <DialogDescription>
-            Create a new student account with default PIN (223344)
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleCreateStudent} className="space-y-6">
-          {/* Personal Information */}
-          <div className="space-y-4">
-            <h4 className="font-semibold">Personal Information</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name *</Label>
-                <Input
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name *</Label>
-                <Input
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="middleName">Middle Name</Label>
-                <Input
-                  id="middleName"
-                  value={formData.middleName}
-                  onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                <Input
-                  id="dateOfBirth"
-                  type="date"
-                  value={formData.dateOfBirth}
-                  onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="gender">Gender</Label>
-                <Select
-                  value={formData.gender}
-                  onValueChange={(value) => setFormData({ ...formData, gender: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
-          {/* Academic Information */}
-          <div className="space-y-4">
-            <h4 className="font-semibold">Academic Information</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="matricNumber">Matric Number *</Label>
-                <Input
-                  id="matricNumber"
-                  placeholder="e.g., ND/CS/2024/001"
-                  value={formData.matricNumber}
-                  onChange={(e) => setFormData({ ...formData, matricNumber: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="level">Level *</Label>
-                <Select
-                  value={formData.level}
-                  onValueChange={(value) => setFormData({ ...formData, level: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ND1">ND1</SelectItem>
-                    <SelectItem value="ND2">ND2</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Information */}
-          <div className="space-y-4">
-            <h4 className="font-semibold">Contact Information</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="080XXXXXXXX"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                placeholder="Student's home address"
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="stateOfOrigin">State of Origin</Label>
-                <Input
-                  id="stateOfOrigin"
-                  value={formData.stateOfOrigin}
-                  onChange={(e) => setFormData({ ...formData, stateOfOrigin: e.target.value })}
-                  placeholder="e.g., Plateau"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lga">Local Government Area</Label>
-                <Input
-                  id="lga"
-                  value={formData.lga}
-                  onChange={(e) => setFormData({ ...formData, lga: e.target.value })}
-                  placeholder="e.g., Barkin Ladi"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-2 pt-4">
-            <Button type="submit" disabled={creating} className="flex-1">
-              {creating ? "Creating Student..." : "Create Student Account"}
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => setShowCreateDialog(false)}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
     </div>
   );
 };
