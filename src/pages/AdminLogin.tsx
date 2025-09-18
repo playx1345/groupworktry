@@ -24,13 +24,30 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      // Check if this is the default admin login (original)
-      if (form.email === 'admin@plasu.edu.ng' && form.password === '123456') {
-        // Handle default admin login without Supabase auth
+      // First verify admin credentials using our function
+      const { data: isValidAdmin, error: verifyError } = await supabase
+        .rpc('verify_admin_login', {
+          admin_email: form.email,
+          admin_password: form.password
+        });
+
+      if (verifyError || !isValidAdmin) {
+        toast({
+          title: "Login Failed",
+          description: "Invalid administrator credentials",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // For hardcoded admin accounts, use localStorage session
+      if ((form.email === 'admin@plasu.edu.ng' && form.password === '123456') ||
+          (form.email === 'silasplayx64@gmail.com' && form.password === '123456')) {
+        
         // Store admin info in localStorage for session management
         localStorage.setItem('adminSession', JSON.stringify({
           email: form.email,
-          username: 'admin',
+          username: form.username || 'admin',
           isDefaultAdmin: true,
           loginTime: Date.now()
         }));
@@ -44,38 +61,27 @@ const AdminLogin = () => {
         return;
       }
 
-      // Check if this is the new admin login
-      if (form.username === 'admin' && form.email === 'silasplayx64@gmail.com' && form.password === '123456') {
-        // Handle new admin login without Supabase auth
-        // Store admin info in localStorage for session management
-        localStorage.setItem('adminSession', JSON.stringify({
-          email: form.email,
-          username: form.username,
-          isDefaultAdmin: true,
-          loginTime: Date.now()
-        }));
-
-        toast({
-          title: "Login Successful",
-          description: "Welcome to the admin dashboard",
-        });
-
-        navigate("/admin/dashboard");
-        return;
-      }
-
-      // For other admin accounts, use normal Supabase auth
+      // For other admin accounts, try Supabase auth
       const { error } = await supabase.auth.signInWithPassword({
         email: form.email,
         password: form.password,
       });
 
       if (error) {
+        // If Supabase auth fails, but admin is verified, use localStorage
+        localStorage.setItem('adminSession', JSON.stringify({
+          email: form.email,
+          username: form.username || 'admin',
+          isDefaultAdmin: true,
+          loginTime: Date.now()
+        }));
+
         toast({
-          title: "Login Failed",
-          description: error.message,
-          variant: "destructive",
+          title: "Login Successful",
+          description: "Welcome to the admin dashboard",
         });
+
+        navigate("/admin/dashboard");
         return;
       }
 

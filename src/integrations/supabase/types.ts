@@ -315,6 +315,10 @@ export type Database = {
           grade_point: number
         }[]
       }
+      ensure_admin_auth: {
+        Args: { admin_email: string; admin_password: string }
+        Returns: string
+      }
       verify_admin_login: {
         Args: { admin_email: string; admin_password: string }
         Returns: boolean

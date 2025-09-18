@@ -106,42 +106,78 @@ const AdminStudentManagement = () => {
     setCreating(true);
 
     try {
-      // Create auth user with default password "223344"
+      console.log('Creating student account with data:', formData);
+      
+      // Check if student already exists
+      const { data: existingStudent } = await supabase
+        .from('students')
+        .select('email, matric_number')
+        .or(`email.eq.${formData.email},matric_number.eq.${formData.matricNumber}`)
+        .single();
+
+      if (existingStudent) {
+        toast({
+          title: "Student Already Exists",
+          description: "A student with this email or matric number already exists",
+          variant: "destructive",
+        });
+        setCreating(false);
+        return;
+      }
+
+      // Create auth user with default password "2233"
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
-        password: "223344", // Default PIN
+        password: "2233", // Default PIN as requested
         options: {
+          emailRedirectTo: `${window.location.origin}/`,
           data: {
             matric_number: formData.matricNumber,
             first_name: formData.firstName,
             last_name: formData.lastName,
-            middle_name: formData.middleName,
-            phone: formData.phone,
+            middle_name: formData.middleName || '',
+            phone: formData.phone || '',
             level: formData.level,
             department: formData.department,
             faculty: formData.faculty,
-            date_of_birth: formData.dateOfBirth,
-            gender: formData.gender,
-            address: formData.address,
-            state_of_origin: formData.stateOfOrigin,
-            lga: formData.lga,
+            date_of_birth: formData.dateOfBirth || null,
+            gender: formData.gender || '',
+            address: formData.address || '',
+            state_of_origin: formData.stateOfOrigin || '',
+            lga: formData.lga || ''
           }
         }
       });
 
       if (authError) {
-        toast({
-          title: "Failed to Create Student",
-          description: authError.message,
-          variant: "destructive",
-        });
+        console.error('Auth signup error:', authError);
+        
+        // Handle specific errors
+        if (authError.message.includes('already registered')) {
+          toast({
+            title: "Email Already Registered",
+            description: "This email is already registered in the system",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Failed to Create Student",
+            description: authError.message,
+            variant: "destructive",
+          });
+        }
         return;
       }
+
+      console.log('Auth user created successfully:', authData);
+
+      // Wait a moment for the trigger to complete
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // The student profile will be automatically created by the trigger
       toast({
         title: "Student Created Successfully",
-        description: `Student account created with default PIN: 223344`,
+        description: `Student account created with default PIN: 2233`,
       });
 
       // Reset form and close dialog
@@ -166,9 +202,10 @@ const AdminStudentManagement = () => {
       // Reload students list
       loadStudents();
     } catch (error) {
+      console.error('Unexpected error:', error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: "An unexpected error occurred while creating the student",
         variant: "destructive",
       });
     } finally {
