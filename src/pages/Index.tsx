@@ -6,7 +6,6 @@ import { useScrollAnimation, useStaggeredAnimation } from "@/hooks/use-scroll-an
 
 const Index = () => {
   const heroAnimation = useScrollAnimation({ threshold: 0.2, triggerOnce: true });
-  const visionMissionAnimation = useScrollAnimation({ threshold: 0.3, triggerOnce: true });
   const featuresAnimation = useStaggeredAnimation(3, 150, { threshold: 0.2, triggerOnce: true });
   const contactAnimation = useScrollAnimation({ threshold: 0.4, triggerOnce: true });
   return (
@@ -70,45 +69,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Vision and Mission Section */}
-      <section ref={visionMissionAnimation.ref} className="py-16 px-4 bg-gradient-to-r from-polytechnic-blue/5 to-polytechnic-green/5 relative z-10">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
-            <Card className={`text-center shadow-card border-0 bg-gradient-card interactive-card ${visionMissionAnimation.isInView ? 'animate-slide-in-left animate-delay-200' : 'opacity-0 -translate-x-10'}`}>
-              <CardHeader>
-                <div className="w-16 h-16 bg-gradient-to-br from-polytechnic-blue to-polytechnic-green rounded-xl flex items-center justify-center mx-auto mb-4 animate-float hover-tilt">
-                  <GraduationCap className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl text-gradient-primary mb-4 font-display">Our Vision</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed text-base">
-                  To revolutionize academic transparency and efficiency through a secure, accessible, 
-                  and intelligent result management system—empowering students and administrators of 
-                  the Department of Computer Science with real-time academic insights and digital autonomy.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className={`text-center shadow-card border-0 bg-gradient-card interactive-card ${visionMissionAnimation.isInView ? 'animate-slide-in-right animate-delay-350' : 'opacity-0 translate-x-10'}`}>
-              <CardHeader>
-                <div className="w-16 h-16 bg-gradient-to-br from-polytechnic-green to-polytechnic-gold rounded-xl flex items-center justify-center mx-auto mb-4 animate-float hover-tilt" style={{animationDelay: '-3s'}}>
-                  <Shield className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl text-gradient-secondary mb-4 font-display">Our Mission</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="text-muted-foreground space-y-3 text-left text-base">
-                  <li className={`${visionMissionAnimation.isInView ? 'animate-fade-in-up animate-delay-500' : 'opacity-0'}`}>• Develop a user-friendly web-based platform that simplifies result access, fee verification, and academic performance tracking for ND1 and ND2 students</li>
-                  <li className={`${visionMissionAnimation.isInView ? 'animate-fade-in-up animate-delay-600' : 'opacity-0'}`}>• Uphold data integrity, security, and accessibility using modern web technologies and cloud infrastructure</li>
-                  <li className={`${visionMissionAnimation.isInView ? 'animate-fade-in-up animate-delay-700' : 'opacity-0'}`}>• Foster digital transformation within the Department by automating administrative tasks</li>
-                  <li className={`${visionMissionAnimation.isInView ? 'animate-fade-in-up animate-delay-800' : 'opacity-0'}`}>• Support academic excellence through timely feedback and personalized performance analytics</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
 
       {/* Features Section */}
       <section ref={featuresAnimation.ref} className="py-16 px-4 relative z-10">
